@@ -18,9 +18,11 @@ export class NotesService {
         title,
         content,
         active,
-        userId,
         categories: {
           connect: categories
+        },
+        user: {
+          connect: { id: userId }
         }
       }
     });
@@ -57,14 +59,13 @@ export class NotesService {
   }
 
   // Update with categories function 
-  update(id: number, { active, categories, title, content, userId }: UpdateNoteDto) {
+  update(id: number, { active, categories, title, content }: UpdateNoteDto) {
     return this.prisma.note.update({
       where: { id },
       data: {
         title,
         content,
         active,
-        userId,
         categories: { connect: categories }
       }
     })
