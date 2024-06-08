@@ -33,9 +33,10 @@ export class NotesService {
 
 
   //From the query parameters this realize the query to filter active and categories
-  findActiveOrCategories(active: boolean, categories: string[]) {
+  findActiveOrCategories(active: boolean, categories: string[], userId: string) {
     return this.prisma.note.findMany({
       where: {
+        userId,
         active: active,
         categories: {
           some: {

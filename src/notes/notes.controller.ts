@@ -3,6 +3,7 @@ import { NotesService } from './notes.service';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { StringifyOptions } from 'querystring';
 
 @Controller('notes')
 @ApiTags('notes')
@@ -17,12 +18,14 @@ export class NotesController {
   // Using query for filter the active/archive notes
   // Using query for filter by category
   @Get()
+  @ApiQuery({ name: 'userId', required: true, type: String, description: 'User id' })
   @ApiQuery({ name: 'active', required: false, type: Boolean, description: 'Active notes' })
   @ApiQuery({ name: 'categories', required: false, type: [String], description: 'List of categories' })
   findAllWithQuery(
+    @Query('userId') userId: string,
     @Query('active', new ParseBoolPipe({ optional: true, })) active?: boolean,
     @Query('categories', new ParseArrayPipe({ items: String, optional: true })) categories?: string[]) {
-    return this.notesService.findActiveOrCategories(active, categories);
+    return this.notesService.findActiveOrCategories(active, categories, userId);
   }
 
 
