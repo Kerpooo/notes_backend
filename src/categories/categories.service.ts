@@ -38,9 +38,29 @@ export class CategoriesService {
     })
   }
 
-  remove(id: number) {
-    return this.prisma.category.delete({
-      where: { id }
-    })
+  async remove(id: number) {
+    const notesWithCategory = await this.prisma.note.findMany({
+      where: {
+        categories: {
+          some: { id },
+        },
+      },
+    });
+
+    await Promise.all(
+      notesWithCategory.map((note) =>
+        this.prisma.note.update({
+          where: { id: note.id },
+          data: {
+            categories: {
+              disconnect: { id },
+            },
+          },
+        })
+      )
+    );
+
+    // Finalmente, elimina la categoría
+    return this.prisma.category.delete({ where: { id } });
   }
-}
+}  
